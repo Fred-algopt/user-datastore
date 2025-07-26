@@ -47,8 +47,16 @@ func main() {
 	r.Post("/edit/{id}", editUserHandler)
 	r.Get("/delete/{id}", deleteUserHandler)
 
-	fmt.Println("Serveur sur http://localhost:8080")
-	http.ListenAndServe(":8080", r)
+	// ✅ Lire le port depuis l'environnement (Cloud Run)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback local
+	}
+
+	fmt.Printf("Serveur sur http://localhost:%s\n", port)
+	if err := http.ListenAndServe(":"+port, r); err != nil {
+		log.Fatalf("Erreur au démarrage du serveur: %v", err)
+	}
 }
 
 // === HANDLERS ===
